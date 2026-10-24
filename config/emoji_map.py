@@ -1,6 +1,6 @@
 # config/emoji_map.py
 E = {
-    "brand": "🧀", "browse": "🛍", "library": "👤", "purchases": "🧾",
+    "brand": "🧀", "browse": "🛍", "catalog": "🛍", "library": "👤", "purchases": "🧾",
     "age": "👧", "studio": "🎬", "era": "📅", "ethnicity": "🌍",
     "featured": "⭐", "full_sets": "🎞", "new": "✨", "top": "🔥",
     "rare": "💎", "search": "🔎", "tags": "🏷", "quality": "📺",

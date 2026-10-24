@@ -22,6 +22,8 @@ def test_menu_callback_data_unique():
 
 def test_menu_callback_within_telegram_limit():
     for cb in _flat(main_menu()):
+        if cb is None:  # URL buttons carry no callback_data
+            continue
         assert len(cb.encode("utf-8")) <= 64
 
 

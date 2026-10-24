@@ -13,9 +13,9 @@ async def show_credits(cb: CallbackQuery):
     rows = []
     for pid, pack in CREDIT_PACKS.items():
         rows.append([InlineKeyboardButton(
-            f"{E['credits']} {pack['credits']} credits — ${pack['price_usd']}",
+            text=f"{E['credits']} {pack['credits']} credits — ${pack['price_usd']}",
             callback_data=f"topup:{pid}")])
-    rows.append([InlineKeyboardButton(f"{E['back']} Menu", callback_data="menu")])
+    rows.append([InlineKeyboardButton(text=f"{E['back']} Menu", callback_data="menu")])
     await cb.message.edit_text(
         f"{E['credits']} *Balance:* {bal} credits\n\nChoose a top-up:",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=rows),
@@ -29,9 +29,9 @@ async def topup(cb: CallbackQuery):
     if not pack:
         await cb.answer("Unknown pack"); return
     rows = [
-        [InlineKeyboardButton(f"{E['credits']} USDT (TRC20)", callback_data=f"pay:usdt:{pid}")],
-        [InlineKeyboardButton(f"⭐ ShipStars", callback_data=f"pay:stars:{pid}")],
-        [InlineKeyboardButton(f"{E['back']} Back", callback_data="credits")],
+        [InlineKeyboardButton(text=f"{E['credits']} USDT (TRC20)", callback_data=f"pay:usdt:{pid}")],
+        [InlineKeyboardButton(text=f"⭐ ShipStars", callback_data=f"pay:stars:{pid}")],
+        [InlineKeyboardButton(text=f"{E['back']} Back", callback_data="credits")],
     ]
     await cb.message.edit_text(
         f"{E['credits']} *{pack['credits']} credits* — ${pack['price_usd']}\n\nChoose payment rail:",

@@ -26,8 +26,8 @@ async def show_age(cb: CallbackQuery):
     rows = []
     for s in sets[:20]:
         label = f"{E['avail']} {s.title[:40]}"
-        rows.append([InlineKeyboardButton(label, callback_data=f"set:{s.id}")])
-    rows.append([InlineKeyboardButton(f"{E['back']} Back", callback_data="menu")])
+        rows.append([InlineKeyboardButton(text=label, callback_data=f"set:{s.id}")])
+    rows.append([InlineKeyboardButton(text=f"{E['back']} Back", callback_data="menu")])
 
     text = f"{E['age']} *Age {band}* — {len(sets)} sets"
     await cb.message.edit_text(

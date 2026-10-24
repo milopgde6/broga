@@ -15,9 +15,9 @@ async def list_studios(cb: CallbackQuery):
     finally:
         db.close()
 
-    rows = [[InlineKeyboardButton(f"{E['studio']} {s.name}",
+    rows = [[InlineKeyboardButton(text=f"{E['studio']} {s.name}",
              callback_data=f"studio:{s.name}")] for s in studios]
-    rows.append([InlineKeyboardButton(f"{E['back']} Back", callback_data="menu")])
+    rows.append([InlineKeyboardButton(text=f"{E['back']} Back", callback_data="menu")])
     await cb.message.edit_text(
         f"{E['studio']} *Studios*",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=rows),

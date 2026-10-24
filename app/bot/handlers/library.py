@@ -15,8 +15,8 @@ async def show_library(cb: CallbackQuery):
         await cb.message.edit_text(
             f"{E['library']} *Your library is empty.*",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-                [InlineKeyboardButton(f"{E['browse']} Browse", callback_data="browse")],
-                [InlineKeyboardButton(f"{E['back']} Menu", callback_data="menu")],
+                [InlineKeyboardButton(text=f"{E['browse']} Browse", callback_data="browse")],
+                [InlineKeyboardButton(text=f"{E['back']} Menu", callback_data="menu")],
             ]), parse_mode="Markdown")
         await cb.answer(); return
 
@@ -26,9 +26,9 @@ async def show_library(cb: CallbackQuery):
     finally:
         db.close()
 
-    rows = [[InlineKeyboardButton(f"{E['owned']} {s.title[:40]}",
+    rows = [[InlineKeyboardButton(text=f"{E['owned']} {s.title[:40]}",
              callback_data=f"open:{s.id}")] for s in sets]
-    rows.append([InlineKeyboardButton(f"{E['back']} Menu", callback_data="menu")])
+    rows.append([InlineKeyboardButton(text=f"{E['back']} Menu", callback_data="menu")])
     await cb.message.edit_text(
         f"{E['library']} *Your Library* — {len(sets)} sets",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=rows),

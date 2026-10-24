@@ -21,9 +21,9 @@ async def ask_query(cb: CallbackQuery, state: FSMContext):
 async def run_search(msg: Message, state: FSMContext):
     results = search(msg.text or "")
     await state.clear()
-    rows = [[InlineKeyboardButton(f"{E['avail']} {s.title[:40]}",
+    rows = [[InlineKeyboardButton(text=f"{E['avail']} {s.title[:40]}",
              callback_data=f"set:{s.id}")] for s in results]
-    rows.append([InlineKeyboardButton(f"{E['back']} Back", callback_data="menu")])
+    rows.append([InlineKeyboardButton(text=f"{E['back']} Back", callback_data="menu")])
     await msg.answer(
         f"{E['search']} *{len(results)} results* for `{msg.text}`",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=rows),

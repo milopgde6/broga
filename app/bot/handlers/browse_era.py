@@ -11,11 +11,11 @@ async def list_eras(cb: CallbackQuery):
     eras = [str(y) for y in range(1995, 2015)]
     rows, row = [], []
     for e in eras:
-        row.append(InlineKeyboardButton(e, callback_data=f"era:{e}"))
+        row.append(InlineKeyboardButton(text=e, callback_data=f"era:{e}"))
         if len(row) == 4:
             rows.append(row); row = []
     if row: rows.append(row)
-    rows.append([InlineKeyboardButton(f"{E['back']} Back", callback_data="menu")])
+    rows.append([InlineKeyboardButton(text=f"{E['back']} Back", callback_data="menu")])
     await cb.message.edit_text(
         f"{E['era']} *By Era*",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=rows),

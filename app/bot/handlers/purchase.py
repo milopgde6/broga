@@ -25,7 +25,7 @@ async def purchases_cb(cb: CallbackQuery):
     await cb.message.edit_text(
         text,
         reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(f"{E['back']} Menu", callback_data="menu")],
+            [InlineKeyboardButton(text=f"{E['back']} Menu", callback_data="menu")],
         ]),
         parse_mode="Markdown",
     )
@@ -57,8 +57,8 @@ async def buy_set(cb: CallbackQuery):
         await cb.message.edit_text(
             f"{E['owned']} *Unlocked:* {title}\n{E['credits']} −{price} credits",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-                [InlineKeyboardButton(f"{E['library']} Open Library", callback_data="library")],
-                [InlineKeyboardButton(f"{E['back']} Menu", callback_data="menu")],
+                [InlineKeyboardButton(text=f"{E['library']} Open Library", callback_data="library")],
+                [InlineKeyboardButton(text=f"{E['back']} Menu", callback_data="menu")],
             ]), parse_mode="Markdown")
     else:
         short = price - bal
@@ -66,7 +66,7 @@ async def buy_set(cb: CallbackQuery):
             f"{E['credits']} *Need {short} more credits*\n\n"
             f"Set: {title}\nPrice: {price} credits\nBalance: {bal}",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-                [InlineKeyboardButton(f"{E['credits']} Top up", callback_data="credits")],
-                [InlineKeyboardButton(f"{E['back']} Back", callback_data="menu")],
+                [InlineKeyboardButton(text=f"{E['credits']} Top up", callback_data="credits")],
+                [InlineKeyboardButton(text=f"{E['back']} Back", callback_data="menu")],
             ]), parse_mode="Markdown")
     await cb.answer()

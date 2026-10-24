@@ -19,14 +19,14 @@ async def show_admin(cb: CallbackQuery):
         await cb.answer(); return
 
     rows = [
-        [InlineKeyboardButton("📤 Upload set", callback_data="adm:upload")],
-        [InlineKeyboardButton("🏷 Edit tags", callback_data="adm:tags")],
-        [InlineKeyboardButton("💰 Pricing", callback_data="adm:pricing")],
-        [InlineKeyboardButton("👥 Users", callback_data="adm:users")],
-        [InlineKeyboardButton("📢 Broadcast", callback_data="adm:broadcast")],
-        [InlineKeyboardButton("📊 Stats", callback_data="adm:stats")],
-        [InlineKeyboardButton("🧾 Manifest", callback_data="adm:manifest")],
-        [InlineKeyboardButton(f"{E['back']} Menu", callback_data="menu")],
+        [InlineKeyboardButton(text="📤 Upload set", callback_data="adm:upload")],
+        [InlineKeyboardButton(text="🏷 Edit tags", callback_data="adm:tags")],
+        [InlineKeyboardButton(text="💰 Pricing", callback_data="adm:pricing")],
+        [InlineKeyboardButton(text="👥 Users", callback_data="adm:users")],
+        [InlineKeyboardButton(text="📢 Broadcast", callback_data="adm:broadcast")],
+        [InlineKeyboardButton(text="📊 Stats", callback_data="adm:stats")],
+        [InlineKeyboardButton(text="🧾 Manifest", callback_data="adm:manifest")],
+        [InlineKeyboardButton(text=f"{E['back']} Menu", callback_data="menu")],
     ]
     await cb.message.edit_text(
         f"{E['admin']} *Admin panel*",
