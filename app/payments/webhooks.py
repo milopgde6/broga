@@ -48,6 +48,7 @@ async def _handle(req: web.Request, rail: str) -> web.Response:
 async def shipstars(req): return await _handle(req, "shipstars")
 async def usdt(req):      return await _handle(req, "usdt")
 async def health(req):    return web.json_response({"ok": True})
+async def root(req):      return web.json_response({"ok": True, "service": "theez-bot"})
 
 
 def create_app() -> web.Application:
@@ -55,6 +56,7 @@ def create_app() -> web.Application:
     app.router.add_post("/webhook/shipstars", shipstars)
     app.router.add_post("/webhook/usdt", usdt)
     app.router.add_get("/health", health)
+    app.router.add_get("/", root)
     return app
 
 

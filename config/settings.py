@@ -39,3 +39,9 @@ R2_SECRET_ACCESS_KEY = os.getenv("R2_SECRET_ACCESS_KEY", "")
 R2_BUCKET            = os.getenv("R2_BUCKET", "")
 R2_ENDPOINT          = os.getenv("R2_ENDPOINT", "")
 R2_URL_TTL_SEC       = int(os.getenv("R2_URL_TTL_SEC", "300"))
+
+# Render free web services sleep after 15 min without inbound HTTP. When a
+# public URL is available (RENDER_EXTERNAL_URL is set automatically on Render),
+# the bot pings its own /health so it never idles out.
+KEEPALIVE_URL          = os.getenv("KEEPALIVE_URL") or os.getenv("RENDER_EXTERNAL_URL", "")
+KEEPALIVE_INTERVAL_SEC = int(os.getenv("KEEPALIVE_INTERVAL_SEC", "300"))

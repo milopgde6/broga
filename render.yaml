@@ -43,3 +43,5 @@ services:
         sync: false
       - key: R2_URL_TTL_SEC
         value: "300"
+      - key: KEEPALIVE_INTERVAL_SEC
+        value: "300"

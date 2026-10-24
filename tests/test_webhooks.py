@@ -20,5 +20,8 @@ async def test_health_endpoint_uses_render_port(monkeypatch):
             async with client.get(f"http://127.0.0.1:{port}/health") as response:
                 assert response.status == 200
                 assert await response.json() == {"ok": True}
+            async with client.get(f"http://127.0.0.1:{port}/") as response:
+                assert response.status == 200
+                assert (await response.json())["ok"] is True
     finally:
         await runner.cleanup()

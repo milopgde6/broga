@@ -8,13 +8,29 @@ from aiogram import Bot
 from aiogram.client.default import DefaultBotProperties
 from aiogram.exceptions import TelegramRetryAfter
 
-from config.settings import BOT_TOKEN
+from config.settings import BOT_TOKEN, KEEPALIVE_INTERVAL_SEC, KEEPALIVE_URL
 from app.bot.dispatcher import build_dispatcher
 from app.data.db import Base, engine
 from app.payments.webhooks import start_webhook_server
 from app.storage.layout import ensure_layout
 
 log = logging.getLogger("theez.boot")
+
+
+async def _keep_alive(url: str, interval: int) -> None:
+    """Ping our own public /health so Render's free tier never idles out."""
+    import aiohttp
+
+    async with aiohttp.ClientSession() as session:
+        while True:
+            try:
+                async with session.get(
+                    url, timeout=aiohttp.ClientTimeout(total=20)
+                ) as resp:
+                    log.debug("keep-alive %s -> %s", url, resp.status)
+            except Exception as exc:
+                log.warning("keep-alive request failed: %s", exc)
+            await asyncio.sleep(interval)
 
 
 def _acquire_single_instance():
@@ -56,6 +72,14 @@ async def main():
             raise
 
         reconcile_task = None
+        keepalive_task = None
+        if KEEPALIVE_URL:
+            base = KEEPALIVE_URL.rstrip("/")
+            health_url = base if base.endswith("/health") else base + "/health"
+            keepalive_task = asyncio.create_task(
+                _keep_alive(health_url, KEEPALIVE_INTERVAL_SEC), name="keep-alive"
+            )
+            log.info("keep-alive every %ss -> %s", KEEPALIVE_INTERVAL_SEC, health_url)
         try:
             try:
                 await bot.delete_webhook(drop_pending_updates=True)
@@ -78,6 +102,9 @@ async def main():
             if reconcile_task is not None:
                 reconcile_task.cancel()
                 await asyncio.gather(reconcile_task, return_exceptions=True)
+            if keepalive_task is not None:
+                keepalive_task.cancel()
+                await asyncio.gather(keepalive_task, return_exceptions=True)
             await webhook_runner.cleanup()
             await bot.session.close()
     finally:
