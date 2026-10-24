@@ -11,6 +11,7 @@ from aiogram.exceptions import TelegramRetryAfter
 from config.settings import BOT_TOKEN
 from app.bot.dispatcher import build_dispatcher
 from app.data.db import Base, engine
+from app.payments.webhooks import start_webhook_server
 from app.storage.layout import ensure_layout
 
 log = logging.getLogger("theez.boot")
@@ -40,30 +41,45 @@ async def main():
     )
     lock = _acquire_single_instance()
     try:
+        if not BOT_TOKEN:
+            raise RuntimeError("BOT_TOKEN is required to start the bot")
+
         ensure_layout()
         Base.metadata.create_all(bind=engine)
         bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode="Markdown"))
         dp = build_dispatcher()
 
         try:
-            await bot.delete_webhook(drop_pending_updates=True)
-        except TelegramRetryAfter as e:
-            await asyncio.sleep(e.retry_after + 1)
-            await bot.delete_webhook(drop_pending_updates=True)
-        except Exception as e:
-            log.warning("delete_webhook failed: %s", e)
+            webhook_runner = await start_webhook_server()
+        except Exception:
+            await bot.session.close()
+            raise
 
-        me = await bot.get_me()
-        print(f"🧀 THEEZ up as @{me.username}")
-
-        from app.payments.reconciliation import reconcile_loop
-
-        bg = [asyncio.create_task(reconcile_loop())]
+        reconcile_task = None
         try:
+            try:
+                await bot.delete_webhook(drop_pending_updates=True)
+            except TelegramRetryAfter as e:
+                await asyncio.sleep(e.retry_after + 1)
+                await bot.delete_webhook(drop_pending_updates=True)
+            except Exception as e:
+                log.warning("delete_webhook failed: %s", e)
+
+            me = await bot.get_me()
+            print(f"🧀 THEEZ up as @{me.username}")
+
+            from app.payments.reconciliation import reconcile_loop
+
+            reconcile_task = asyncio.create_task(
+                reconcile_loop(), name="payment-reconciliation"
+            )
             await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
         finally:
-            for t in bg:
-                t.cancel()
+            if reconcile_task is not None:
+                reconcile_task.cancel()
+                await asyncio.gather(reconcile_task, return_exceptions=True)
+            await webhook_runner.cleanup()
+            await bot.session.close()
     finally:
         lock.close()
 

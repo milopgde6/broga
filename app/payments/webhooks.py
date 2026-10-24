@@ -3,6 +3,7 @@
 import asyncio
 import hmac
 import logging
+import os
 
 from aiohttp import web
 
@@ -56,11 +57,15 @@ def create_app() -> web.Application:
     return app
 
 
-async def run_webhook_server():
+async def start_webhook_server(port: int | None = None) -> web.AppRunner:
+    bind_port = port if port is not None else int(os.getenv("PORT", str(WEBHOOK_PORT)))
     runner = web.AppRunner(create_app())
     await runner.setup()
-    site = web.TCPSite(runner, WEBHOOK_HOST, WEBHOOK_PORT)
-    await site.start()
-    log.info("webhooks listening on %s:%s", WEBHOOK_HOST, WEBHOOK_PORT)
-    while True:
-        await asyncio.sleep(3600)
+    try:
+        site = web.TCPSite(runner, WEBHOOK_HOST, bind_port)
+        await site.start()
+    except Exception:
+        await runner.cleanup()
+        raise
+    log.info("webhooks listening on %s:%s", WEBHOOK_HOST, bind_port)
+    return runner
