@@ -1,14 +1,17 @@
-# app/bot/handlers/provenance.py
+import json
+
 from aiogram import Router, F
 from aiogram.types import CallbackQuery
+
 from config.emoji_map import E
 from app.bot.keyboards.shared_kb import back_kb
 from app.data.models import Set
 from app.data.db import SessionLocal
+from app.storage import files
 from app.storage.layout import manifest_path
-import os, json
 
 router = Router()
+
 
 @router.callback_query(F.data.startswith("prov:"))
 async def show_provenance(cb: CallbackQuery):
@@ -26,9 +29,8 @@ async def show_provenance(cb: CallbackQuery):
 
     mpath = manifest_path(set_id)
     hashes = "—"
-    if os.path.exists(mpath):
-        with open(mpath) as f:
-            m = json.load(f)
+    if files.exists(mpath):
+        m = json.loads(files.read_text(mpath))
         hashes = "\n".join(f"`{c['sha256'][:16]}…` {c['file']}" for c in m["clips"][:5])
 
     text = (

@@ -1,24 +1,26 @@
-# app/catalog/manifest.py
-import json, os
-from app.utils.hashing import sha256_file
+import json
+import os
+
 from app.data.models import Set
 from app.data.db import SessionLocal
-from app.storage.layout import MANIFESTS, manifest_path
+from app.storage import files
+from app.storage.layout import manifest_path
+
 
 def build_manifest(set_id: int) -> str:
-    """Write a hash manifest for a set. Returns manifest path."""
-    os.makedirs(MANIFESTS, exist_ok=True)
+    """Write a hash manifest for a set. Returns the storage key."""
     with SessionLocal() as db:
         s = db.query(Set).get(set_id)
         if not s:
             raise ValueError("set not found")
         entries = []
         for c in s.clips:
-            if os.path.exists(c.path):
+            key = files.key_for(c.path)
+            if files.exists(key):
                 entries.append({
-                    "file": os.path.basename(c.path),
-                    "sha256": sha256_file(c.path),
-                    "bytes": os.path.getsize(c.path),
+                    "file": os.path.basename(key),
+                    "sha256": files.sha256(key),
+                    "bytes": files.size(key),
                 })
         manifest = {
             "set_id": s.id,
@@ -27,23 +29,21 @@ def build_manifest(set_id: int) -> str:
             "quality": s.quality,
             "clips": entries,
         }
-    path = manifest_path(set_id)
-    with open(path, "w") as f:
-        json.dump(manifest, f, indent=2)
-    return path
+    return files.write_text(manifest_path(set_id), json.dumps(manifest, indent=2))
+
 
 def verify_manifest(set_id: int) -> bool:
     """Re-hash and compare against stored manifest."""
     path = manifest_path(set_id)
-    if not os.path.exists(path):
+    if not files.exists(path):
         return False
-    with open(path) as f:
-        manifest = json.load(f)
+    manifest = json.loads(files.read_text(path))
     with SessionLocal() as db:
         s = db.query(Set).get(set_id)
         for entry, clip in zip(manifest["clips"], s.clips):
-            if not os.path.exists(clip.path):
+            key = files.key_for(clip.path)
+            if not files.exists(key):
                 return False
-            if sha256_file(clip.path) != entry["sha256"]:
+            if files.sha256(key) != entry["sha256"]:
                 return False
     return True

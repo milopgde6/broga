@@ -15,8 +15,8 @@ services:
         sync: false
       - key: ADMIN_IDS
         sync: false
-      - key: DB_URL
-        value: sqlite:///./theez.db
+      - key: DATABASE_URL
+        sync: false
       - key: TOKEN_SECRET
         generateValue: true
       - key: TOKEN_TTL_SEC
@@ -31,3 +31,15 @@ services:
         sync: false
       - key: STORAGE_ROOT
         value: ./storage
+      - key: R2_ACCOUNT_ID
+        sync: false
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_BUCKET
+        sync: false
+      - key: R2_ENDPOINT
+        sync: false
+      - key: R2_URL_TTL_SEC
+        value: "300"

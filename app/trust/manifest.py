@@ -1,25 +1,22 @@
-# app/trust/manifest.py
-import hashlib, os, json
+import json
+import os
 from datetime import datetime
+
+from app.storage import files
 from app.storage.layout import MANIFESTS, manifest_path
+from app.utils.hashing import sha256_file  # re-exported for callers
 
 MANIFEST_DIR = MANIFESTS
 
-def sha256_file(path: str) -> str:
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
 
 def build_manifest(set_row, clip_paths: list[str]) -> dict:
-    os.makedirs(MANIFESTS, exist_ok=True)
     entries = []
     for p in clip_paths:
+        key = files.key_for(p)
         entries.append({
-            "file": os.path.basename(p),
-            "sha256": sha256_file(p),
-            "bytes": os.path.getsize(p),
+            "file": os.path.basename(key),
+            "sha256": files.sha256(key),
+            "bytes": files.size(key),
         })
     manifest = {
         "set_id": set_row.id,
@@ -27,7 +24,5 @@ def build_manifest(set_row, clip_paths: list[str]) -> dict:
         "built_at": datetime.utcnow().isoformat(),
         "clips": entries,
     }
-    out = manifest_path(set_row.id)
-    with open(out, "w") as f:
-        json.dump(manifest, f, indent=2)
+    files.write_text(manifest_path(set_row.id), json.dumps(manifest, indent=2))
     return manifest
