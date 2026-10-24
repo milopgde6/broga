@@ -16,7 +16,8 @@ log = logging.getLogger("theez.webhooks")
 
 def _authorized(req: web.Request) -> bool:
     if not WEBHOOK_SECRET:
-        return True
+        log.error("WEBHOOK_SECRET is not set; rejecting payment webhook")
+        return False
     got = req.headers.get("X-Theez-Secret", "")
     return hmac.compare_digest(got, WEBHOOK_SECRET)
 
