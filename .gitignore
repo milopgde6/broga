@@ -1,0 +1,22 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+config/.env
+*.db
+*.sqlite3
+app/storage/temp/*
+app/storage/encoded/*
+app/storage/thumbs/*
+app/storage/previews/*
+!app/storage/**/.gitkeep
+!app/storage/**/README.md
+
+# backups
+app/data/backups/**/*.db
+!app/data/backups/**/.gitkeep
+!app/data/backups/**/README.md
+
+.pytest_cache/
+.DS_Store

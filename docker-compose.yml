@@ -1,0 +1,8 @@
+services:
+  bot:
+    build: .
+    env_file: .env
+    volumes:
+      - ./app/storage:/app/app/storage
+      - ./theez.db:/app/theez.db
+    restart: unless-stopped

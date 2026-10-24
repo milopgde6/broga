@@ -1,0 +1,4 @@
+# config/limits.py
+RATE_LIMIT_PER_MIN = 30
+MAX_CART_ITEMS = 20
+SEARCH_PAGE_SIZE = 8

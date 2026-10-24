@@ -1,0 +1,33 @@
+services:
+  - type: worker
+    name: theez-bot
+    runtime: python
+    plan: starter
+    region: oregon
+    buildCommand: pip install --no-cache-dir -r requirements.txt
+    startCommand: python -m app.bot.main
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: BOT_TOKEN
+        sync: false
+      - key: ADMIN_IDS
+        sync: false
+      - key: DB_URL
+        value: sqlite:////var/data/theez.db
+      - key: TOKEN_SECRET
+        generateValue: true
+      - key: TOKEN_TTL_SEC
+        value: "60"
+      - key: SHIPSTARS_KEY
+        sync: false
+      - key: USDT_TRC20_ADDR
+        sync: false
+      - key: USDT_WATCHER_URL
+        sync: false
+      - key: STORAGE_ROOT
+        value: /var/data/storage
+    disk:
+      name: theez-data
+      mountPath: /var/data
+      sizeGB: 10
