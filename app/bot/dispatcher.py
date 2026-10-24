@@ -16,6 +16,7 @@ from app.bot.handlers import (
     new_arrivals, top_selling, quality_filter, promos,
     featured, full_sets, rare, refer,
 )
+from app.admin import upload as admin_upload, manifest_admin
 
 log = logging.getLogger("theez.errors")
 
@@ -54,6 +55,8 @@ def build_dispatcher() -> Dispatcher:
     dp.include_router(library.router)
     dp.include_router(credits.router)
     dp.include_router(admin.router)
+    dp.include_router(admin_upload.router)
+    dp.include_router(manifest_admin.router)
     dp.include_router(provenance.router)
     dp.include_router(new_arrivals.router)
     dp.include_router(top_selling.router)
