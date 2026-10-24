@@ -8,7 +8,9 @@ from aiogram import Bot
 from aiogram.client.default import DefaultBotProperties
 from aiogram.exceptions import TelegramRetryAfter
 
-from config.settings import BOT_TOKEN, KEEPALIVE_INTERVAL_SEC, KEEPALIVE_URL
+from config.settings import (
+    BOT_TOKEN, DROP_PENDING_UPDATES, KEEPALIVE_INTERVAL_SEC, KEEPALIVE_URL,
+)
 from app.bot.dispatcher import build_dispatcher
 from app.data.db import Base, engine
 from app.payments.webhooks import start_webhook_server
@@ -82,10 +84,10 @@ async def main():
             log.info("keep-alive every %ss -> %s", KEEPALIVE_INTERVAL_SEC, health_url)
         try:
             try:
-                await bot.delete_webhook(drop_pending_updates=True)
+                await bot.delete_webhook(drop_pending_updates=DROP_PENDING_UPDATES)
             except TelegramRetryAfter as e:
                 await asyncio.sleep(e.retry_after + 1)
-                await bot.delete_webhook(drop_pending_updates=True)
+                await bot.delete_webhook(drop_pending_updates=DROP_PENDING_UPDATES)
             except Exception as e:
                 log.warning("delete_webhook failed: %s", e)
 

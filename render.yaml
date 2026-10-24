@@ -45,3 +45,5 @@ services:
         value: "300"
       - key: KEEPALIVE_INTERVAL_SEC
         value: "300"
+      - key: DROP_PENDING_UPDATES
+        value: "false"

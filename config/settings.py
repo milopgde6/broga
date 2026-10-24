@@ -45,3 +45,9 @@ R2_URL_TTL_SEC       = int(os.getenv("R2_URL_TTL_SEC", "300"))
 # the bot pings its own /health so it never idles out.
 KEEPALIVE_URL          = os.getenv("KEEPALIVE_URL") or os.getenv("RENDER_EXTERNAL_URL", "")
 KEEPALIVE_INTERVAL_SEC = int(os.getenv("KEEPALIVE_INTERVAL_SEC", "300"))
+
+# Keep updates that arrived while the service was asleep, so /start gets a
+# reply after a wake/restart. Set true to discard a stale backlog.
+DROP_PENDING_UPDATES = os.getenv("DROP_PENDING_UPDATES", "false").strip().lower() in (
+    "1", "true", "yes", "on",
+)
